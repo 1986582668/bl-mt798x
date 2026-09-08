@@ -1,0 +1,27 @@
+name: Build ikuai Q3000 multi-layout uboot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y gcc-aarch64-linux-gnu build-essential flex bison libssl-dev device-tree-compiler qemu-user-static
+
+      - name: Build multi-layout uboot (mt7981 ikuai_q3000)
+        run: |
+          chmod +x build.sh
+          SOC=mt7981 BOARD=ikuai_q3000 MULTI_LAYOUT=1 ./build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mt7981_ikuai_q3000-uboot-multi-layout
+          path: output/
